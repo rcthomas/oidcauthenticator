@@ -1,2 +1,4 @@
 jupyterhub
+oauthenticator
+pyjwt
 pyopenssl
