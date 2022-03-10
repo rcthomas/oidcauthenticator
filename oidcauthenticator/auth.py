@@ -343,6 +343,9 @@ class OIDCAuthenticator(GenericOAuthenticator):
             has passed more than "auth_refresh_age" seconds.
         """
 
+        return True
+
+        # Leaving this around so we can try to get it working for real.
         try:
             # Retrieve user authentication info, decode, and check if refresh is needed
             auth_state = await user.get_auth_state()
