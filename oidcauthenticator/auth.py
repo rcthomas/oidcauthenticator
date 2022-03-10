@@ -284,7 +284,6 @@ class OIDCAuthenticator(GenericOAuthenticator):
 
     async def _get_ssh_key(self, token, username):
         request = httpclient.AsyncHTTPClient()
-        print(self.skey)
         if self.skey != '':
             h = {'content-type': 'application/json'}
             h['Authorization'] = 'Bearer %s' % (token)
