@@ -56,12 +56,6 @@ class OIDCAuthenticator(GenericOAuthenticator):
         help="List with the roles for which the login will be accepted. If an empty list is given (default) all users are allowed."
     )
 
-    admin_role = Unicode(
-        default_value='swan-admins',
-        config=True,
-        help="Users with this role login as jupyterhub administrators"
-    )
-
     pre_spawn_hook = Any(
         allow_none=True,
         config=True,
@@ -265,8 +259,7 @@ class OIDCAuthenticator(GenericOAuthenticator):
             self.log.error("Failed to exchange tokens during authenticate.", exc_info=True)
             return None
 
-        user['admin'] = self.admin_role and (self.admin_role in user_roles)
-        self.log.info("Authentication Successful for user: %s, roles: %s, admin: %s" % (user['name'], user_roles, user['admin']))
+        self.log.info("Authentication Successful for user: %s, roles: %s" % (user['name'], user_roles))
 
         return user
 
