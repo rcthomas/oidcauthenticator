@@ -9,6 +9,7 @@ CERN (https://github.com/swan-cern).  It has been modified to work with Satosa.
 """
 
 """OIDCAuthenticator"""
+from jupyterhub.crypto import encrypt
 from jupyterhub.utils import maybe_future
 from oauthenticator.generic import GenericOAuthenticator
 from traitlets import Unicode, Bool, List, Any, TraitError, default, validate
@@ -240,7 +241,12 @@ class OIDCAuthenticator(GenericOAuthenticator):
             return None
 
         try:
-            await self._get_ssh_key(user['auth_state']['id_token'], user['name'])
+            private_key_data, certificate_data = await self._get_ssh_key(user['auth_state']['id_token'], user['name'])
+            doc = await encrypt({
+                "private_key": private_key_data,
+                "certificate": certificate_data,
+            })
+            user['auth_state']['key'] = doc.decode('utf-8')
         except Exception as e:
             self.log.error(e)
             self.log.error("Unable to retrieve ssh key")
@@ -274,6 +280,9 @@ class OIDCAuthenticator(GenericOAuthenticator):
             if line.startswith('ssh-rsa-cert'):
                 with open(f'{file}-cert.pub', 'w') as f:
                     f.write(f'{line}\n')
+        # Read cert back in
+        with open(f'{file}-cert.pub', 'r') as f:
+            return f.read()
 
     async def _get_ssh_key(self, token, username):
         request = httpclient.AsyncHTTPClient()
@@ -294,7 +303,8 @@ class OIDCAuthenticator(GenericOAuthenticator):
                                        headers=None)
         if resp.code == 200:
             file = Path(self.cert_path)/f'{username}.key'
-            self._write_key(file, resp.body.decode(self.encoding))
+            data = resp.body.decode(self.encoding)
+            return (data, self._write_key(file, data))
         else:
             message = (
                 f'SSH Auth API Authentication failed for'
