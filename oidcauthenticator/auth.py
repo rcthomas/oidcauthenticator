@@ -298,7 +298,7 @@ class OIDCAuthenticator(GenericOAuthenticator):
         else:
             message = (
                 f'SSH Auth API Authentication failed for'
-                f' {username}@{handler.request.remote_ip}'
+                f' {username}'
                 f' with error {resp.code}: "{resp.reason}"'
             )
             self.log.warning(message)
