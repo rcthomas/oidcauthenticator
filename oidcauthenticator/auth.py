@@ -302,7 +302,7 @@ class OIDCAuthenticator(GenericOAuthenticator):
                 f' with error {resp.code}: "{resp.reason}"'
             )
             self.log.warning(message)
-            return None
+            raise Exception(message)
 
     @staticmethod
     def _create_auth_state(token_response, user_data_response):

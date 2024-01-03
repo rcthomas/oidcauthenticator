@@ -1,5 +1,5 @@
 
-version_info = ( 1, 0, 2,)
+version_info = ( 1, 0, 4,)
 __version__ = '.'.join(map(str, version_info[:3]))
 
 if len(version_info) > 3:
